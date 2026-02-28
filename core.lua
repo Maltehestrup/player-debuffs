@@ -96,18 +96,12 @@ function UpdateDebuffs()
         local col = (i - 1) % PlayerDebuffsDB.maxDebuffsPerRow
         local row = math.floor((i - 1) / PlayerDebuffsDB.maxDebuffsPerRow)
         debuffIcons[i].texture:SetTexture(debuff.icon)
-        debuffIcons[i].count:SetFont(STANDARD_TEXT_FONT, 12 * PlayerDebuffsDB.scale, "OUTLINE")
+        debuffIcons[i].count:SetFont(STANDARD_TEXT_FONT, 10 * PlayerDebuffsDB.scale, "OUTLINE")
         debuffIcons[i].count:SetText(debuff.count > 1 and debuff.count or "")
         debuffIcons[i]:SetSize(30 * PlayerDebuffsDB.scale, 30 * PlayerDebuffsDB.scale)
         debuffIcons[i]:SetPoint("TOPLEFT", col * (35 * PlayerDebuffsDB.scale), row * (-35 * PlayerDebuffsDB.scale))
 
-        if debuff.duration and debuff.expirationTime and debuff.duration > 0 then
-            CooldownFrame_SetTimer(debuffIcons[i].cooldown, debuff.expirationTime - debuff.duration, debuff.duration, 1)
-            debuffIcons[i].cooldown:Show()
-            debuffIcons[i].cooldown.duration:SetFont(STANDARD_TEXT_FONT, 12 * PlayerDebuffsDB.scale, "OUTLINE")
-        else
-            debuffIcons[i].cooldown:Hide()
-        end
+        debuffIcons[i].cooldown:Hide()
 
         debuffIcons[i]:Show()
     end
