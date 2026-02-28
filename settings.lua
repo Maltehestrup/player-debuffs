@@ -72,6 +72,16 @@ local function CreateSettingsPanel()
                         get = function() return PlayerDebuffsDB.debuffPadding end,
                         set = function(info, value) PlayerDebuffsDB.debuffPadding = value; UpdateDebuffs() end,
                     },
+                    fontSize = {
+                        type = "range",
+                        name = "Font Size",
+                        desc = "Adjust the font size of the count and duration text.",
+                        min = 6,
+                        max = 20,
+                        step = 1,
+                        get = function() return PlayerDebuffsDB.fontSize end,
+                        set = function(info, value) PlayerDebuffsDB.fontSize = value; UpdateDebuffs() end,
+                    },
                 },
             },
             priority = {
