@@ -70,6 +70,12 @@ local function CreateSettingsPanel()
                     },
                 },
             },
+            test = {
+                type = "execute",
+                name = "Test",
+                desc = "Show a test of the debuff frame.",
+                func = function() ShowTestDebuffs() end,
+            },
         },
     }
 
