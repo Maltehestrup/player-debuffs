@@ -87,14 +87,11 @@ function UpdateDebuffs()
             debuffIcons[i].texture = debuffIcons[i]:CreateTexture(nil, "BACKGROUND")
             debuffIcons[i].texture:SetAllPoints()
             debuffIcons[i].count = debuffIcons[i]:CreateFontString(nil, "OVERLAY")
-            debuffIcons[i].count:SetFont(STANDARD_TEXT_FONT, PlayerDebuffsDB.fontSize, "OUTLINE")
             debuffIcons[i].count:SetPoint("BOTTOMRIGHT", 2, -2)
 
             debuffIcons[i].cooldown = CreateFrame("Cooldown", "PlayerDebuffsCooldown" .. i, debuffIcons[i], "CooldownFrameTemplate")
             debuffIcons[i].cooldown:SetAllPoints()
-            
-            debuffIcons[i].duration = debuffIcons[i]:CreateFontString(nil, "OVERLAY")
-            debuffIcons[i].duration:SetPoint("CENTER", 0, 0)
+            debuffIcons[i].cooldown.duration:SetDrawLayer("OVERLAY")
         end
 
         -- Update the icon's texture, count, and position
@@ -105,25 +102,13 @@ function UpdateDebuffs()
         debuffIcons[i].count:SetText(debuff.count > 1 and debuff.count or "")
         debuffIcons[i]:SetSize(30 * PlayerDebuffsDB.scale, 30 * PlayerDebuffsDB.scale)
         debuffIcons[i]:SetPoint("TOPLEFT", col * (30 + PlayerDebuffsDB.debuffPadding) * PlayerDebuffsDB.scale, row * (-30 - PlayerDebuffsDB.debuffPadding) * PlayerDebuffsDB.scale)
-        debuffIcons[i].duration:SetFont(STANDARD_TEXT_FONT, PlayerDebuffsDB.fontSize, "OUTLINE")
+        debuffIcons[i].cooldown.duration:SetFont(STANDARD_TEXT_FONT, PlayerDebuffsDB.fontSize, "OUTLINE")
 
         if debuff.duration and debuff.expirationTime and debuff.duration > 0 then
-            debuffIcons[i].cooldown:SetCooldown(debuff.expirationTime - debuff.duration, debuff.duration)
+            CooldownFrame_SetTimer(debuffIcons[i].cooldown, debuff.expirationTime - debuff.duration, debuff.duration, 1, true)
             debuffIcons[i].cooldown:Show()
-            debuffIcons[i].duration:Show()
-            debuffIcons[i]:SetScript("OnUpdate", function(self, elapsed)
-                local remaining = debuff.expirationTime - GetTime()
-                if remaining > 0 then
-                    self.duration:SetText(string.format("%.1f", remaining))
-                else
-                    self.duration:SetText("")
-                    self:SetScript("OnUpdate", nil)
-                end
-            end)
         else
             debuffIcons[i].cooldown:Hide()
-            debuffIcons[i].duration:Hide()
-            debuffIcons[i]:SetScript("OnUpdate", nil)
         end
 
         debuffIcons[i]:Show()
