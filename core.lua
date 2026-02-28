@@ -39,16 +39,16 @@ function UpdateDebuffs()
     local debuffs = {}
     if isTesting then
         debuffs = {
-            { name = "Magic Debuff", icon = "Interface\\Icons\\Spell_Shadow_ShadowWordPain", count = 1, debuffType = "Magic", priority = PlayerDebuffsDB.priority.magic or 1 },
-            { name = "Curse Debuff", icon = "Interface\\Icons\\Spell_Shadow_CurseOfTounges", count = 1, debuffType = "Curse", priority = PlayerDebuffsDB.priority.curse or 1 },
-            { name = "Disease Debuff", icon = "Interface\\Icons\\Spell_Shadow_CreepingPlague", count = 1, debuffType = "Disease", priority = PlayerDebuffsDB.priority.disease or 1 },
-            { name = "Poison Debuff", icon = "Interface\\Icons\\Spell_Nature_Poison", count = 1, debuffType = "Poison", priority = PlayerDebuffsDB.priority.poison or 1 },
+            { name = "Magic Debuff", icon = "Interface\\Icons\\Spell_Shadow_ShadowWordPain", count = 1, debuffType = "Magic", duration = 10, expirationTime = GetTime() + 10, priority = tonumber(PlayerDebuffsDB.priority.magic) or 1 },
+            { name = "Curse Debuff", icon = "Interface\\Icons\\Spell_Shadow_CurseOfTounges", count = 1, debuffType = "Curse", duration = 15, expirationTime = GetTime() + 15, priority = tonumber(PlayerDebuffsDB.priority.curse) or 1 },
+            { name = "Disease Debuff", icon = "Interface\\Icons\\Spell_Shadow_CreepingPlague", count = 1, debuffType = "Disease", duration = 20, expirationTime = GetTime() + 20, priority = tonumber(PlayerDebuffsDB.priority.disease) or 1 },
+            { name = "Poison Debuff", icon = "Interface\\Icons\\Spell_Nature_Poison", count = 1, debuffType = "Poison", duration = 25, expirationTime = GetTime() + 25, priority = tonumber(PlayerDebuffsDB.priority.poison) or 1 },
         }
     else
         -- Get the player's debuffs
         local i = 1
         while true do
-            local name, icon, count, debuffType, duration = UnitDebuff("player", i)
+            local name, icon, count, debuffType, duration, expirationTime = UnitDebuff("player", i)
             if not name then
                 break
             end
@@ -59,6 +59,8 @@ function UpdateDebuffs()
                 icon = icon,
                 count = count,
                 debuffType = debuffType,
+                duration = duration,
+                expirationTime = expirationTime,
                 priority = tonumber(PlayerDebuffsDB.priority[debuffType]) or 10
             })
             i = i + 1
@@ -80,6 +82,13 @@ function UpdateDebuffs()
             debuffIcons[i].count = debuffIcons[i]:CreateFontString(nil, "OVERLAY")
             debuffIcons[i].count:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
             debuffIcons[i].count:SetPoint("BOTTOMRIGHT", 2, -2)
+
+            debuffIcons[i].cooldown = CreateFrame("Cooldown", "PlayerDebuffsCooldown" .. i, debuffIcons[i], "CooldownFrameTemplate")
+            debuffIcons[i].cooldown:SetAllPoints()
+
+            debuffIcons[i].duration = debuffIcons[i]:CreateFontString(nil, "OVERLAY")
+            debuffIcons[i].duration:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE")
+            debuffIcons[i].duration:SetPoint("CENTER", 0, 0)
         end
 
         -- Update the icon's texture, count, and position
@@ -87,6 +96,26 @@ function UpdateDebuffs()
         debuffIcons[i].count:SetText(debuff.count > 1 and debuff.count or "")
         debuffIcons[i]:SetSize(30 * PlayerDebuffsDB.scale, 30 * PlayerDebuffsDB.scale)
         debuffIcons[i]:SetPoint("LEFT", (i - 1) * (35 * PlayerDebuffsDB.scale), 0)
+
+        if debuff.duration and debuff.expirationTime and debuff.duration > 0 then
+            debuffIcons[i].cooldown:SetCooldown(debuff.expirationTime - debuff.duration, debuff.duration)
+            debuffIcons[i].cooldown:Show()
+            debuffIcons[i].duration:Show()
+            debuffIcons[i]:SetScript("OnUpdate", function(self, elapsed)
+                local remaining = debuff.expirationTime - GetTime()
+                if remaining > 0 then
+                    self.duration:SetText(string.format("%.1f", remaining))
+                else
+                    self.duration:SetText("")
+                    self:SetScript("OnUpdate", nil)
+                end
+            end)
+        else
+            debuffIcons[i].cooldown:Hide()
+            debuffIcons[i].duration:Hide()
+            debuffIcons[i]:SetScript("OnUpdate", nil)
+        end
+
         debuffIcons[i]:Show()
     end
 end
