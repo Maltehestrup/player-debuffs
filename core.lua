@@ -130,5 +130,16 @@ frame:SetScript("OnEvent", function(self, event, unit, ...)
     end
 end)
 
--- Initial update
-UpdateDebuffs()
+local function OnPlayerLogin()
+    UpdateDebuffs()
+end
+
+frame:RegisterEvent("PLAYER_LOGIN")
+frame:SetScript("OnEvent", function(self, event, ...)
+    if event == "PLAYER_LOGIN" then
+        OnPlayerLogin()
+        self:UnregisterEvent("PLAYER_LOGIN")
+    elseif unit == "player" and not isTesting then
+        UpdateDebuffs()
+    end
+end)
