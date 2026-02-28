@@ -51,6 +51,16 @@ local function CreateSettingsPanel()
                         get = function() return PlayerDebuffsDB.offsetY end,
                         set = function(info, value) PlayerDebuffsDB.offsetY = value; UpdateDebuffs() end,
                     },
+                    maxDebuffsPerRow = {
+                        type = "range",
+                        name = "Max Debuffs Per Row",
+                        desc = "Set the maximum number of debuffs to display per row.",
+                        min = 1,
+                        max = 10,
+                        step = 1,
+                        get = function() return PlayerDebuffsDB.maxDebuffsPerRow end,
+                        set = function(info, value) PlayerDebuffsDB.maxDebuffsPerRow = value; UpdateDebuffs() end,
+                    },
                 },
             },
             priority = {
@@ -93,6 +103,19 @@ local function CreateSettingsPanel()
                         step = 1,
                         get = function() return PlayerDebuffsDB.priority.poison end,
                         set = function(info, value) PlayerDebuffsDB.priority.poison = value; UpdateDebuffs() end,
+                    },
+                },
+            },
+            filter = {
+                type = "group",
+                name = "Filter",
+                args = {
+                    spellIds = {
+                        type = "input",
+                        name = "Spell IDs",
+                        desc = "Enter a comma-separated list of spell IDs to block from being displayed.",
+                        get = function() return PlayerDebuffsDB.filter.spellIds end,
+                        set = function(info, value) PlayerDebuffsDB.filter.spellIds = value; UpdateDebuffs() end,
                     },
                 },
             },
