@@ -90,7 +90,10 @@ function UpdateDebuffs()
 
             debuffIcons[i].cooldown = CreateFrame("Cooldown", "PlayerDebuffsCooldown" .. i, debuffIcons[i], "CooldownFrameTemplate")
             debuffIcons[i].cooldown:SetAllPoints()
-            debuffIcons[i].duration = _G[debuffIcons[i].cooldown:GetName() .. "Duration"]
+            debuffIcons[i].cooldown.duration:Hide()
+            debuffIcons[i].duration = debuffIcons[i]:CreateFontString(nil, "OVERLAY")
+            debuffIcons[i].duration:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
+            debuffIcons[i].duration:SetPoint("CENTER", 0, 0)
         end
 
         -- Update the icon's texture, count, and position
@@ -103,7 +106,7 @@ function UpdateDebuffs()
         debuffIcons[i]:SetPoint("TOPLEFT", col * (35 * PlayerDebuffsDB.scale), row * (-35 * PlayerDebuffsDB.scale))
 
         if debuff.duration and debuff.expirationTime and debuff.duration > 0 then
-            debuffIcons[i].cooldown:SetCooldown(debuff.expirationTime - debuff.duration, debuff.duration)
+            CooldownFrame_SetTimer(debuffIcons[i].cooldown, debuff.expirationTime - debuff.duration, debuff.duration, 1)
             debuffIcons[i].cooldown:Show()
             debuffIcons[i].duration:SetFont(STANDARD_TEXT_FONT, 12 * PlayerDebuffsDB.scale, "OUTLINE")
             debuffIcons[i].duration:Show()
