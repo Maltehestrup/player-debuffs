@@ -48,7 +48,7 @@ function UpdateDebuffs()
         -- Get the player's debuffs
         local i = 1
         while true do
-            local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitAura("player", i, "HARMFUL")
+            local name, icon, count, debuffType, duration = UnitDebuff("player", i)
             if not name then
                 break
             end
@@ -59,7 +59,7 @@ function UpdateDebuffs()
                 icon = icon,
                 count = count,
                 debuffType = debuffType,
-                priority = PlayerDebuffsDB.priority[debuffType] or 10
+                priority = tonumber(PlayerDebuffsDB.priority[debuffType]) or 10
             })
             i = i + 1
         end
