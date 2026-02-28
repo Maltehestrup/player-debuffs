@@ -48,7 +48,7 @@ function UpdateDebuffs()
         -- Get the player's debuffs
         local i = 1
         while true do
-            local name, rank, icon, count, debuffType, duration, timeLeft, unitCaster, isStealable, shouldConsolidate, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowPersonal, nameplateShowAll = UnitAura("player", i, "HARMFUL")
+            local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitAura("player", i, "HARMFUL")
             if not name then
                 break
             end
