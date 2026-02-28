@@ -18,6 +18,7 @@ local function CreateSettingsPanel()
         type = "group",
         args = {
             positioning = {
+                order = 1,
                 type = "group",
                 name = "Positioning",
                 args = {
@@ -61,9 +62,20 @@ local function CreateSettingsPanel()
                         get = function() return PlayerDebuffsDB.maxDebuffsPerRow end,
                         set = function(info, value) PlayerDebuffsDB.maxDebuffsPerRow = value; UpdateDebuffs() end,
                     },
+                    debuffPadding = {
+                        type = "range",
+                        name = "Debuff Padding",
+                        desc = "Adjust the spacing between the debuff icons.",
+                        min = 0,
+                        max = 10,
+                        step = 1,
+                        get = function() return PlayerDebuffsDB.debuffPadding end,
+                        set = function(info, value) PlayerDebuffsDB.debuffPadding = value; UpdateDebuffs() end,
+                    },
                 },
             },
             priority = {
+                order = 2,
                 type = "group",
                 name = "Debuff Priority",
                 desc = "Set the priority of different debuff types.",
@@ -107,6 +119,7 @@ local function CreateSettingsPanel()
                 },
             },
             test = {
+                order = 3,
                 type = "execute",
                 name = function() return PlayerDebuffs_IsTesting() and "Toggle Off" or "Toggle On" end,
                 desc = "Show a test of the debuff frame.",

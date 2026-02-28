@@ -17,6 +17,7 @@ if not PlayerDebuffsDB.priority.disease then PlayerDebuffsDB.priority.disease = 
 if not PlayerDebuffsDB.priority.poison then PlayerDebuffsDB.priority.poison = 1 end
 if not PlayerDebuffsDB.offsetX then PlayerDebuffsDB.offsetX = 0 end
 if not PlayerDebuffsDB.offsetY then PlayerDebuffsDB.offsetY = -10 end
+if not PlayerDebuffsDB.debuffPadding then PlayerDebuffsDB.debuffPadding = 5 end
 
 -- Create the main frame
 local frame = CreateFrame("Frame", "PlayerDebuffsFrame", UIParent)
@@ -99,7 +100,7 @@ function UpdateDebuffs()
         debuffIcons[i].texture:SetTexture(debuff.icon)
         debuffIcons[i].count:SetText(debuff.count > 1 and debuff.count or "")
         debuffIcons[i]:SetSize(30 * PlayerDebuffsDB.scale, 30 * PlayerDebuffsDB.scale)
-        debuffIcons[i]:SetPoint("LEFT", (i - 1) * (35 * PlayerDebuffsDB.scale), 0)
+        debuffIcons[i]:SetPoint("TOPLEFT", col * (30 + PlayerDebuffsDB.debuffPadding) * PlayerDebuffsDB.scale, row * (-30 - PlayerDebuffsDB.debuffPadding) * PlayerDebuffsDB.scale)
 
         if debuff.duration and debuff.expirationTime and debuff.duration > 0 then
             debuffIcons[i].cooldown:SetCooldown(debuff.expirationTime - debuff.duration, debuff.duration)
