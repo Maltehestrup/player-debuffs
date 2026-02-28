@@ -87,7 +87,7 @@ function UpdateDebuffs()
             debuffIcons[i].cooldown:SetAllPoints()
             
             debuffIcons[i].duration = debuffIcons[i]:CreateFontString(nil, "OVERLAY")
-            debuffIcons[i].duration:SetFont(STANDARD_TEXT_FONT, 10 * PlayerDebuffsDB.scale, "OUTLINE")
+            debuffIcons[i].duration:SetFont(STANDARD_TEXT_FONT, 8 * PlayerDebuffsDB.scale, "OUTLINE")
             debuffIcons[i].duration:SetPoint("CENTER", 0, 0)
         end
 
@@ -104,7 +104,7 @@ function UpdateDebuffs()
             debuffIcons[i]:SetScript("OnUpdate", function(self, elapsed)
                 local remaining = debuff.expirationTime - GetTime()
                 if remaining > 0 then
-                    self.duration:SetText(string.format("%d", remaining + 0.5))
+                    self.duration:SetText(string.format("%.1f", remaining))
                 else
                     self.duration:SetText("")
                     self:SetScript("OnUpdate", nil)
