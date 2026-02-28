@@ -17,6 +17,7 @@ if not PlayerDebuffsDB.priority.disease then PlayerDebuffsDB.priority.disease = 
 if not PlayerDebuffsDB.priority.poison then PlayerDebuffsDB.priority.poison = 1 end
 if not PlayerDebuffsDB.offsetX then PlayerDebuffsDB.offsetX = 72 end
 if not PlayerDebuffsDB.offsetY then PlayerDebuffsDB.offsetY = 32 end
+if not PlayerDebuffsDB.maxDebuffsPerRow then PlayerDebuffsDB.maxDebuffsPerRow = 5 end
 
 -- Create the main frame
 local frame = CreateFrame("Frame", "PlayerDebuffsFrame", UIParent)
@@ -96,6 +97,8 @@ function UpdateDebuffs()
         end
 
         -- Update the icon's texture, count, and position
+        local col = (i - 1) % PlayerDebuffsDB.maxDebuffsPerRow
+        local row = math.floor((i - 1) / PlayerDebuffsDB.maxDebuffsPerRow)
         debuffIcons[i].texture:SetTexture(debuff.icon)
         debuffIcons[i].count:SetText(debuff.count > 1 and debuff.count or "")
         debuffIcons[i]:SetSize(30 * PlayerDebuffsDB.scale, 30 * PlayerDebuffsDB.scale)
