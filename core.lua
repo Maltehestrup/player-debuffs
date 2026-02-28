@@ -96,10 +96,14 @@ function ShowTestDebuffs()
     UpdateDebuffs()
 end
 
+function PlayerDebuffs_IsTesting()
+    return isTesting
+end
+
 -- Register for events
-frame:RegisterEvent("PLAYER_AURAS_CHANGED")
-frame:SetScript("OnEvent", function(self, event, ...)
-    if not isTesting then
+frame:RegisterEvent("UNIT_AURA")
+frame:SetScript("OnEvent", function(self, event, unit, ...)
+    if unit == "player" and not isTesting then
         UpdateDebuffs()
     end
 end)
