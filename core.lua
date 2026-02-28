@@ -17,7 +17,6 @@ if not PlayerDebuffsDB.priority.disease then PlayerDebuffsDB.priority.disease = 
 if not PlayerDebuffsDB.priority.poison then PlayerDebuffsDB.priority.poison = 1 end
 if not PlayerDebuffsDB.offsetX then PlayerDebuffsDB.offsetX = 0 end
 if not PlayerDebuffsDB.offsetY then PlayerDebuffsDB.offsetY = -10 end
-if not PlayerDebuffsDB.maxDebuffsPerRow then PlayerDebuffsDB.maxDebuffsPerRow = 5 end
 
 -- Create the main frame
 local frame = CreateFrame("Frame", "PlayerDebuffsFrame", UIParent)
@@ -44,10 +43,6 @@ function UpdateDebuffs()
             { name = "Curse Debuff", icon = "Interface\\Icons\\Spell_Shadow_CurseOfTounges", count = 1, debuffType = "Curse", duration = 15, expirationTime = GetTime() + 15, priority = tonumber(PlayerDebuffsDB.priority.curse) or 1 },
             { name = "Disease Debuff", icon = "Interface\\Icons\\Spell_Shadow_CreepingPlague", count = 1, debuffType = "Disease", duration = 20, expirationTime = GetTime() + 20, priority = tonumber(PlayerDebuffsDB.priority.disease) or 1 },
             { name = "Poison Debuff", icon = "Interface\\Icons\\Spell_Nature_Poison", count = 1, debuffType = "Poison", duration = 25, expirationTime = GetTime() + 25, priority = tonumber(PlayerDebuffsDB.priority.poison) or 1 },
-            { name = "Magic Debuff", icon = "Interface\\Icons\\Spell_Shadow_ShadowWordPain", count = 1, debuffType = "Magic", duration = 10, expirationTime = GetTime() + 10, priority = tonumber(PlayerDebuffsDB.priority.magic) or 1 },
-            { name = "Curse Debuff", icon = "Interface\\Icons\\Spell_Shadow_CurseOfTounges", count = 1, debuffType = "Curse", duration = 15, expirationTime = GetTime() + 15, priority = tonumber(PlayerDebuffsDB.priority.curse) or 1 },
-            { name = "Disease Debuff", icon = "Interface\\Icons\\Spell_Shadow_CreepingPlague", count = 1, debuffType = "Disease", duration = 20, expirationTime = GetTime() + 20, priority = tonumber(PlayerDebuffsDB.priority.disease) or 1 },
-            { name = "Poison Debuff", icon = "Interface\\Icons\\Spell_Nature_Poison", count = 1, debuffType = "Poison", duration = 25, expirationTime = GetTime() + 25, priority = tonumber(PlayerDebuffsDB.priority.poison) or 1 },
         }
     else
         -- Get the player's debuffs
@@ -57,7 +52,6 @@ function UpdateDebuffs()
             if not name then
                 break
             end
-
             print("Found debuff:", name, "type:", debuffType) -- Debugging print
             debuffType = debuffType or "none"
             table.insert(debuffs, {
@@ -86,22 +80,41 @@ function UpdateDebuffs()
             debuffIcons[i].texture = debuffIcons[i]:CreateTexture(nil, "BACKGROUND")
             debuffIcons[i].texture:SetAllPoints()
             debuffIcons[i].count = debuffIcons[i]:CreateFontString(nil, "OVERLAY")
+            debuffIcons[i].count:SetFont(STANDARD_TEXT_FONT, 10 * PlayerDebuffsDB.scale, "OUTLINE")
             debuffIcons[i].count:SetPoint("BOTTOMRIGHT", 2, -2)
 
             debuffIcons[i].cooldown = CreateFrame("Cooldown", "PlayerDebuffsCooldown" .. i, debuffIcons[i], "CooldownFrameTemplate")
             debuffIcons[i].cooldown:SetAllPoints()
+            
+            debuffIcons[i].duration = debuffIcons[i]:CreateFontString(nil, "OVERLAY")
+            debuffIcons[i].duration:SetFont(STANDARD_TEXT_FONT, 10 * PlayerDebuffsDB.scale, "OUTLINE")
+            debuffIcons[i].duration:SetPoint("CENTER", 0, 0)
         end
 
         -- Update the icon's texture, count, and position
-        local col = (i - 1) % PlayerDebuffsDB.maxDebuffsPerRow
-        local row = math.floor((i - 1) / PlayerDebuffsDB.maxDebuffsPerRow)
         debuffIcons[i].texture:SetTexture(debuff.icon)
-        debuffIcons[i].count:SetFont(STANDARD_TEXT_FONT, 10 * PlayerDebuffsDB.scale, "OUTLINE")
         debuffIcons[i].count:SetText(debuff.count > 1 and debuff.count or "")
         debuffIcons[i]:SetSize(30 * PlayerDebuffsDB.scale, 30 * PlayerDebuffsDB.scale)
-        debuffIcons[i]:SetPoint("TOPLEFT", col * (35 * PlayerDebuffsDB.scale), row * (-35 * PlayerDebuffsDB.scale))
+        debuffIcons[i]:SetPoint("LEFT", (i - 1) * (35 * PlayerDebuffsDB.scale), 0)
 
-        debuffIcons[i].cooldown:Hide()
+        if debuff.duration and debuff.expirationTime and debuff.duration > 0 then
+            debuffIcons[i].cooldown:SetCooldown(debuff.expirationTime - debuff.duration, debuff.duration)
+            debuffIcons[i].cooldown:Show()
+            debuffIcons[i].duration:Show()
+            debuffIcons[i]:SetScript("OnUpdate", function(self, elapsed)
+                local remaining = debuff.expirationTime - GetTime()
+                if remaining > 0 then
+                    self.duration:SetText(string.format("%d", remaining + 0.5))
+                else
+                    self.duration:SetText("")
+                    self:SetScript("OnUpdate", nil)
+                end
+            end)
+        else
+            debuffIcons[i].cooldown:Hide()
+            debuffIcons[i].duration:Hide()
+            debuffIcons[i]:SetScript("OnUpdate", nil)
+        end
 
         debuffIcons[i]:Show()
     end
@@ -124,16 +137,5 @@ frame:SetScript("OnEvent", function(self, event, unit, ...)
     end
 end)
 
-local function OnPlayerLogin()
-    UpdateDebuffs()
-end
-
-frame:RegisterEvent("PLAYER_LOGIN")
-frame:SetScript("OnEvent", function(self, event, ...)
-    if event == "PLAYER_LOGIN" then
-        OnPlayerLogin()
-        self:UnregisterEvent("PLAYER_LOGIN")
-    elseif unit == "player" and not isTesting then
-        UpdateDebuffs()
-    end
-end)
+-- Initial update
+UpdateDebuffs()
