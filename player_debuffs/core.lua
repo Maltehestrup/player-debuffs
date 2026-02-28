@@ -1,4 +1,3 @@
--- Player Debuffs by Gemini
 -- core.lua
 
 -- Check for Ace3
