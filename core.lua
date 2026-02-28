@@ -43,6 +43,10 @@ function UpdateDebuffs()
             { name = "Curse Debuff", icon = "Interface\\Icons\\Spell_Shadow_CurseOfTounges", count = 1, debuffType = "Curse", duration = 15, expirationTime = GetTime() + 15, priority = tonumber(PlayerDebuffsDB.priority.curse) or 1 },
             { name = "Disease Debuff", icon = "Interface\\Icons\\Spell_Shadow_CreepingPlague", count = 1, debuffType = "Disease", duration = 20, expirationTime = GetTime() + 20, priority = tonumber(PlayerDebuffsDB.priority.disease) or 1 },
             { name = "Poison Debuff", icon = "Interface\\Icons\\Spell_Nature_Poison", count = 1, debuffType = "Poison", duration = 25, expirationTime = GetTime() + 25, priority = tonumber(PlayerDebuffsDB.priority.poison) or 1 },
+            { name = "Magic Debuff", icon = "Interface\\Icons\\Spell_Shadow_ShadowWordPain", count = 1, debuffType = "Magic", duration = 10, expirationTime = GetTime() + 10, priority = tonumber(PlayerDebuffsDB.priority.magic) or 1 },
+            { name = "Curse Debuff", icon = "Interface\\Icons\\Spell_Shadow_CurseOfTounges", count = 1, debuffType = "Curse", duration = 15, expirationTime = GetTime() + 15, priority = tonumber(PlayerDebuffsDB.priority.curse) or 1 },
+            { name = "Disease Debuff", icon = "Interface\\Icons\\Spell_Shadow_CreepingPlague", count = 1, debuffType = "Disease", duration = 20, expirationTime = GetTime() + 20, priority = tonumber(PlayerDebuffsDB.priority.disease) or 1 },
+            { name = "Poison Debuff", icon = "Interface\\Icons\\Spell_Nature_Poison", count = 1, debuffType = "Poison", duration = 25, expirationTime = GetTime() + 25, priority = tonumber(PlayerDebuffsDB.priority.poison) or 1 },
         }
     else
         -- Get the player's debuffs
@@ -130,12 +134,14 @@ function PlayerDebuffs_IsTesting()
 end
 
 -- Register for events
+frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("UNIT_AURA")
+
 frame:SetScript("OnEvent", function(self, event, unit, ...)
-    if unit == "player" and not isTesting then
+    if event == "PLAYER_LOGIN" then
+        UpdateDebuffs()
+        self:UnregisterEvent("PLAYER_LOGIN")
+    elseif event == "UNIT_AURA" and unit == "player" and not isTesting then
         UpdateDebuffs()
     end
 end)
-
--- Initial update
-UpdateDebuffs()
