@@ -106,19 +106,6 @@ local function CreateSettingsPanel()
                     },
                 },
             },
-            filter = {
-                type = "group",
-                name = "Filter",
-                args = {
-                    spellIds = {
-                        type = "input",
-                        name = "Spell IDs",
-                        desc = "Enter a comma-separated list of spell IDs to block from being displayed.",
-                        get = function() return PlayerDebuffsDB.filter.spellIds end,
-                        set = function(info, value) PlayerDebuffsDB.filter.spellIds = value; UpdateDebuffs() end,
-                    },
-                },
-            },
             test = {
                 type = "execute",
                 name = function() return PlayerDebuffs_IsTesting() and "Toggle Off" or "Toggle On" end,

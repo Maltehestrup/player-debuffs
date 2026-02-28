@@ -17,8 +17,6 @@ if not PlayerDebuffsDB.priority.disease then PlayerDebuffsDB.priority.disease = 
 if not PlayerDebuffsDB.priority.poison then PlayerDebuffsDB.priority.poison = 1 end
 if not PlayerDebuffsDB.offsetX then PlayerDebuffsDB.offsetX = 0 end
 if not PlayerDebuffsDB.offsetY then PlayerDebuffsDB.offsetY = -10 end
-if not PlayerDebuffsDB.filter then PlayerDebuffsDB.filter = {} end
-if not PlayerDebuffsDB.filter.spellIds then PlayerDebuffsDB.filter.spellIds = "" end
 if not PlayerDebuffsDB.maxDebuffsPerRow then PlayerDebuffsDB.maxDebuffsPerRow = 5 end
 
 -- Create the main frame
@@ -54,30 +52,23 @@ function UpdateDebuffs()
     else
         -- Get the player's debuffs
         local i = 1
-        local filteredSpells = {}
-        for spellId in string.gmatch(PlayerDebuffsDB.filter.spellIds, "[^,]+") do
-            filteredSpells[tonumber(spellId)] = true
-        end
-
         while true do
-            local name, icon, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitDebuff("player", i)
+            local name, icon, count, debuffType, duration, expirationTime = UnitDebuff("player", i)
             if not name then
                 break
             end
 
-            if not filteredSpells[spellId] then
-                print("Found debuff:", name, "type:", debuffType) -- Debugging print
-                debuffType = debuffType or "none"
-                table.insert(debuffs, {
-                    name = name,
-                    icon = icon,
-                    count = count,
-                    debuffType = debuffType,
-                    duration = duration,
-                    expirationTime = expirationTime,
-                    priority = tonumber(PlayerDebuffsDB.priority[debuffType]) or 10
-                })
-            end
+            print("Found debuff:", name, "type:", debuffType) -- Debugging print
+            debuffType = debuffType or "none"
+            table.insert(debuffs, {
+                name = name,
+                icon = icon,
+                count = count,
+                debuffType = debuffType,
+                duration = duration,
+                expirationTime = expirationTime,
+                priority = tonumber(PlayerDebuffsDB.priority[debuffType]) or 10
+            })
             i = i + 1
         end
     end
