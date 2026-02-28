@@ -1,0 +1,10 @@
+## Interface: 20504
+## Title: Player Debuffs
+## Notes: Mirrors the player's debuffs below the player unitframe.
+## Author: Gemini
+## Version: 1.0.0
+## SavedVariables: PlayerDebuffsDB
+## OptionalDeps: Ace3
+
+core.lua
+settings.lua
