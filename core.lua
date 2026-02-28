@@ -17,16 +17,19 @@ if not PlayerDebuffsDB then
             disease = 1,
             poison = 1,
         },
+        offsetX = 0,
+        offsetY = -10,
     }
 end
 
 -- Create the main frame
 local frame = CreateFrame("Frame", "PlayerDebuffsFrame", UIParent)
 frame:SetSize(200, 30)
-frame:SetPoint("TOP", PlayerFrame, "BOTTOM", 0, -10)
+frame:SetPoint("TOP", PlayerFrame, "BOTTOM", PlayerDebuffsDB.offsetX, PlayerDebuffsDB.offsetY)
 
 -- Create a table to hold the debuff icons
 local debuffIcons = {}
+local isTesting = false
 
 -- Function to update the debuffs
 function UpdateDebuffs(testDebuffs)
@@ -34,6 +37,8 @@ function UpdateDebuffs(testDebuffs)
     for i, icon in ipairs(debuffIcons) do
         icon:Hide()
     end
+
+    frame:SetPoint("TOP", PlayerFrame, "BOTTOM", PlayerDebuffsDB.offsetX, PlayerDebuffsDB.offsetY)
 
     local debuffs
     if testDebuffs then
@@ -43,7 +48,7 @@ function UpdateDebuffs(testDebuffs)
         debuffs = {}
         local i = 1
         while true do
-            local name, rank, icon, count, debuffType, duration, timeLeft = UnitDebuff("player", i)
+            local name, rank, icon, count, debuffType, duration, timeLeft, unitCaster, isStealable, shouldConsolidate, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowPersonal, nameplateShowAll = UnitAura("player", i, "HARMFUL")
             if not name then
                 break
             end
@@ -87,13 +92,19 @@ function UpdateDebuffs(testDebuffs)
 end
 
 function ShowTestDebuffs()
-    local testDebuffs = {
-        { name = "Magic Debuff", icon = "Interface\\Icons\\Spell_Shadow_ShadowWordPain", count = 1, debuffType = "Magic", priority = PlayerDebuffsDB.priority.magic or 1 },
-        { name = "Curse Debuff", icon = "Interface\\Icons\\Spell_Shadow_CurseOfTounges", count = 1, debuffType = "Curse", priority = PlayerDebuffsDB.priority.curse or 1 },
-        { name = "Disease Debuff", icon = "Interface\\Icons\\Spell_Shadow_CreepingPlague", count = 1, debuffType = "Disease", priority = PlayerDebuffsDB.priority.disease or 1 },
-        { name = "Poison Debuff", icon = "Interface\\Icons\\Spell_Nature_Poison", count = 1, debuffType = "Poison", priority = PlayerDebuffsDB.priority.poison or 1 },
-    }
-    UpdateDebuffs(testDebuffs)
+    if isTesting then
+        isTesting = false
+        UpdateDebuffs()
+    else
+        isTesting = true
+        local testDebuffs = {
+            { name = "Magic Debuff", icon = "Interface\\Icons\\Spell_Shadow_ShadowWordPain", count = 1, debuffType = "Magic", priority = PlayerDebuffsDB.priority.magic or 1 },
+            { name = "Curse Debuff", icon = "Interface\\Icons\\Spell_Shadow_CurseOfTounges", count = 1, debuffType = "Curse", priority = PlayerDebuffsDB.priority.curse or 1 },
+            { name = "Disease Debuff", icon = "Interface\\Icons\\Spell_Shadow_CreepingPlague", count = 1, debuffType = "Disease", priority = PlayerDebuffsDB.priority.disease or 1 },
+            { name = "Poison Debuff", icon = "Interface\\Icons\\Spell_Nature_Poison", count = 1, debuffType = "Poison", priority = PlayerDebuffsDB.priority.poison or 1 },
+        }
+        UpdateDebuffs(testDebuffs)
+    end
 end
 
 -- Register for events
