@@ -32,7 +32,7 @@ local debuffIcons = {}
 local isTesting = false
 
 -- Function to update the debuffs
-function UpdateDebuffs(testDebuffs)
+function UpdateDebuffs()
     -- Clear the existing debuff icons
     for i, icon in ipairs(debuffIcons) do
         icon:Hide()
@@ -40,12 +40,16 @@ function UpdateDebuffs(testDebuffs)
 
     frame:SetPoint("TOP", PlayerFrame, "BOTTOM", PlayerDebuffsDB.offsetX, PlayerDebuffsDB.offsetY)
 
-    local debuffs
-    if testDebuffs then
-        debuffs = testDebuffs
+    local debuffs = {}
+    if isTesting then
+        debuffs = {
+            { name = "Magic Debuff", icon = "Interface\\Icons\\Spell_Shadow_ShadowWordPain", count = 1, debuffType = "Magic", priority = PlayerDebuffsDB.priority.magic or 1 },
+            { name = "Curse Debuff", icon = "Interface\\Icons\\Spell_Shadow_CurseOfTounges", count = 1, debuffType = "Curse", priority = PlayerDebuffsDB.priority.curse or 1 },
+            { name = "Disease Debuff", icon = "Interface\\Icons\\Spell_Shadow_CreepingPlague", count = 1, debuffType = "Disease", priority = PlayerDebuffsDB.priority.disease or 1 },
+            { name = "Poison Debuff", icon = "Interface\\Icons\\Spell_Nature_Poison", count = 1, debuffType = "Poison", priority = PlayerDebuffsDB.priority.poison or 1 },
+        }
     else
         -- Get the player's debuffs
-        debuffs = {}
         local i = 1
         while true do
             local name, rank, icon, count, debuffType, duration, timeLeft, unitCaster, isStealable, shouldConsolidate, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowPersonal, nameplateShowAll = UnitAura("player", i, "HARMFUL")
@@ -92,25 +96,14 @@ function UpdateDebuffs(testDebuffs)
 end
 
 function ShowTestDebuffs()
-    if isTesting then
-        isTesting = false
-        UpdateDebuffs()
-    else
-        isTesting = true
-        local testDebuffs = {
-            { name = "Magic Debuff", icon = "Interface\\Icons\\Spell_Shadow_ShadowWordPain", count = 1, debuffType = "Magic", priority = PlayerDebuffsDB.priority.magic or 1 },
-            { name = "Curse Debuff", icon = "Interface\\Icons\\Spell_Shadow_CurseOfTounges", count = 1, debuffType = "Curse", priority = PlayerDebuffsDB.priority.curse or 1 },
-            { name = "Disease Debuff", icon = "Interface\\Icons\\Spell_Shadow_CreepingPlague", count = 1, debuffType = "Disease", priority = PlayerDebuffsDB.priority.disease or 1 },
-            { name = "Poison Debuff", icon = "Interface\\Icons\\Spell_Nature_Poison", count = 1, debuffType = "Poison", priority = PlayerDebuffsDB.priority.poison or 1 },
-        }
-        UpdateDebuffs(testDebuffs)
-    end
+    isTesting = not isTesting
+    UpdateDebuffs()
 end
 
 -- Register for events
 frame:RegisterEvent("PLAYER_AURAS_CHANGED")
 frame:SetScript("OnEvent", function(self, event, ...)
-    if event == "PLAYER_AURAS_CHANGED" then
+    if not isTesting then
         UpdateDebuffs()
     end
 end)
