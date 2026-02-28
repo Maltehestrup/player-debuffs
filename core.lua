@@ -8,19 +8,15 @@ if not ace then
 end
 
 -- Initialize the database
-if not PlayerDebuffsDB then
-    PlayerDebuffsDB = {
-        scale = 1,
-        priority = {
-            magic = 1,
-            curse = 1,
-            disease = 1,
-            poison = 1,
-        },
-        offsetX = 0,
-        offsetY = -10,
-    }
-end
+if not PlayerDebuffsDB then PlayerDebuffsDB = {} end
+if not PlayerDebuffsDB.scale then PlayerDebuffsDB.scale = 1 end
+if not PlayerDebuffsDB.priority then PlayerDebuffsDB.priority = {} end
+if not PlayerDebuffsDB.priority.magic then PlayerDebuffsDB.priority.magic = 1 end
+if not PlayerDebuffsDB.priority.curse then PlayerDebuffsDB.priority.curse = 1 end
+if not PlayerDebuffsDB.priority.disease then PlayerDebuffsDB.priority.disease = 1 end
+if not PlayerDebuffsDB.priority.poison then PlayerDebuffsDB.priority.poison = 1 end
+if not PlayerDebuffsDB.offsetX then PlayerDebuffsDB.offsetX = 0 end
+if not PlayerDebuffsDB.offsetY then PlayerDebuffsDB.offsetY = -10 end
 
 -- Create the main frame
 local frame = CreateFrame("Frame", "PlayerDebuffsFrame", UIParent)
