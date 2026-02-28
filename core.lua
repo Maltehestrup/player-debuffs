@@ -91,6 +91,12 @@ function UpdateDebuffs()
 
             debuffIcons[i].cooldown = CreateFrame("Cooldown", "PlayerDebuffsCooldown" .. i, debuffIcons[i], "CooldownFrameTemplate")
             debuffIcons[i].cooldown:SetAllPoints()
+            for j=1, debuffIcons[i].cooldown:GetNumRegions() do
+                local region = select(j, debuffIcons[i].cooldown:GetRegions())
+                if region:GetObjectType() == "FontString" then
+                    print("FontString:", region:GetName())
+                end
+            end
             debuffIcons[i].cooldown.duration:SetDrawLayer("OVERLAY")
         end
 
